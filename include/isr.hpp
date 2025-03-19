@@ -27,6 +27,31 @@ class ResetInterrupt : public InterruptHandler
 {
     public:
         void handle() override;
+    private:
+        enum class PLL {
+            PLL_SYS = PLL_SYS_BASE,
+            PLL_USB = PLL_USB_BASE,
+        };
+        /**
+         * @brief PLL初期化
+         */
+        void init_pll(PLL pll, UINT refdiv, UINT vco_freq, UINT post_div1, UINT post_div2);
+        /**
+         * @brief クロック初期化
+         */
+        void init_clock();
+        /**
+         * @brief ペリフェラル初期化
+         */
+        void init_pripherals();
+        /**
+         * @brief メモリ初期化
+         */
+        void init_mem();
+        /**
+         * @brief タイマの初期化
+         */
+        void init_systimer();
 };
 
 
