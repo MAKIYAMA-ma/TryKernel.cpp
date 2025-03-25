@@ -27,7 +27,7 @@ static inline void xset_w(UW adr, UW data)
 // 32bitレジスタへの出力(set on write)
 // Atomic Register Access機能を利用
 #define OP_ARA_SET  0x2000
-static inline void xset_w(UW adr, UW data)
+static inline void set_w(UW adr, UW data)
 {
     *(_UW*)(adr + OP_ARA_SET) = data;
 }
@@ -35,7 +35,7 @@ static inline void xset_w(UW adr, UW data)
 // 32bitレジスタへの出力(clear on write)
 // Atomic Register Access機能を利用
 #define OP_ARA_CLR  0x3000
-static inline void xset_w(UW adr, UW data)
+static inline void clr_w(UW adr, UW data)
 {
     *(_UW*)(adr + OP_ARA_CLR) = data;
 }
