@@ -38,16 +38,80 @@ ResetInterrupt::init_pll(PLL pll, UINT refdiv, UINT vco_freq, UINT post_div1, UI
 }
 
 /**
+ * @brief クロック設定関数
+ */
+ResetInterrupt::clock_config(UINT type, UINT src, UINT auxsrc, UINT src_freq, UINT freq)
+{
+    if(freq > src_freq) return;
+
+    UD div64 = ((((UD) src_freq) << 8) / freq);
+    UW div, actual_div;
+
+    if(div64 >> 32) {
+        div = 0;
+        actual_div = src_freq >> (32-8);
+    } else {
+        div = (UW)div64;
+        actual_div = (UW)((((UD) src_freq) << 8) / div);
+    }
+
+    if(div > in_w(CLOCKS_BASE+type+CLK_DIV_OFFSET)) {
+        out_w(CLOCKS_BASE+type+CLK_DIV_OFFSET, div);
+    }
+
+    if(type == CLK_TYPE_SYS || type == CLK_TYPE_REF) {
+        clr_w(CLOCKS_BASE+type+CLK_CTRL_OFFSET, 0x00000003);
+        while (!(in_w(CLOCKS_BASE+type+CLK_SELECTED_OFFSET) & 0x00000001));
+    } else {
+        clr_w(CLOCKS_BASE+type+CLK_CTRL_OFFSET, CLK_SYS_CTRL_ENABLE_BITS);
+    }
+
+    out_w(CLOCKS_BASE+type+CLK_CTRL_OFFSET,
+            (in_w(CLOCKS_BASE+type+CLK_CTRL_OFFSET) & ~CLK_SYS_CTRL_AUXSRC_BITS) |
+            (auxsrc << CLK_SYS_CTRL_AUXSRC_LSB));
+
+    if(type == CLK_TYPE_SYS || type == CLK_TYPE_REF) {
+        out_w(CLOCKS_BASE+type+CLK_CTRL_OFFSET,
+                (in_w(CLOCKS_BASE+type+CLK_CTRL_OFFSET) & ~CLK_REF_CTRL_SRC_BITS) |
+                (src << CLK_REF_CTRL_SRC_LSB));
+        while (!(in_w(CLOCKS_BASE+type+CLK_SELECTED_OFFSET) & (0x00000001 << src)));
+    }
+
+    // this code has no effect when selected clock is SYS or REF
+    set_w(CLOCKS_BASE+type+CLK_CTRL_OFFSET, CLK_SYS_CTRL_ENABLE_BITS);
+
+    out_w(CLOCKS_BASE+type+CLK_CTRL_DIV, div);
+}
+
+/**
  * @brief クロック初期化
  */
 ResetInterrupt::init_clock()
 {
+    out_w(CLK_SYS_RESUS_CTRL, 0);
+
+    init_xosc();
+
+    clr_w(CLOCKS_BASE+CLK_TYPE_SYS+CLK_CTRL_OFFSET, CLK_REF_CTRL_SRC_BITS);
+    while (!(in_w(CLOCKS_BASE+CLK_TYPE_SYS+CLK_SELECTED_OFFSET) & 0x00000001));
+    clr_w(CLOCKS_BASE+CLK_TYPE_REF+CLK_CTRL_OFFSET, CLK_REF_CTRL_SRC_BITS);
+    while (!(in_w(CLOCKS_BASE+CLK_TYPE_REF+CLK_SELECTED_OFFSET) & 0x00000001));
+
+    init_pll(PLL_SYS, 1, 1500*MHz, 6, 2);
+    init_pll(PLL_USB, 1, 1200*MHz, 5, 5);
+
+    clock_config(CLK_TYPE_REF, 0x02, 0, 12*MHz, 12*MHz);
+    clock_config(CLK_TYPE_SYS, 0x01, 0, 125*MHz, 125*MHz);
+    clock_config(CLK_TYPE_USB, 0, 0, 48*MHz, 48*MHz);
+    clock_config(CLK_TYPE_ADC, 0, 0, 48*MHz, 48*MHz);
+    clock_config(CLK_TYPE_RTC, 0, 0, 48*MHz, 46875);
+    clock_config(CLK_TYPE_PERI, 0, 0, 125*MHz, 125*MHz);
 }
 
 /**
  * @brief ペリフェラル初期化
  */
-ResetInterrupt::init_pripherals()
+ResetInterrupt::init_peripherals()
 {
 }
 
@@ -56,6 +120,17 @@ ResetInterrupt::init_pripherals()
  */
 ResetInterrupt::init_mem()
 {
+}
+
+/**
+ * @brief XOSC初期化
+ */
+ResetInterrupt::init_xosc()
+{
+    out_w(XOSC_CTRL, XOSC_CTRL_FREQ_RQNGE_1_15MHZ);
+    out_w(XOSC_STARTUP, ((((XOSC_HZ / KHZ) + 128) / 256) * 64));
+    set_w(XOSC_CTRL, (XOSC_CTRL_ENABLE << XOSC_CTRL_ENABLE_LSB));
+    while (!(in_w(XOSC_STATUS) & XOSC_STATUS_STABLE_BITS));
 }
 
 /**

@@ -44,35 +44,69 @@
 #define SYSCFG_BASE              (0x40004000)
 // CLOCK Registers
 #define CLOCKS_BASE              (0x40008000)
+#if 1
+#define CLK_TYPE_GPOUT0          (0x00)
+#define CLK_TYPE_GPOUT1          (0x0C)
+#define CLK_TYPE_GPOUT2          (0x18)
+#define CLK_TYPE_GPOUT3          (0x24)
+#define CLK_TYPE_REF             (0x30)
+#define CLK_TYPE_SYS             (0x3C)
+#define CLK_TYPE_PERI            (0x48)
+#define CLK_TYPE_USB             (0x54)
+#define CLK_TYPE_ADC             (0x60)
+#define CLK_TYPE_RTC             (0x6C)
+
+#define CLK_CTRL_OFFSET          (0x00)
+#define CLK_SYS_CTRL_ENABLE_BITS (0x00000800)
+#define CLK_SYS_CTRL_AUXSRC_BITS (0x000000E0)
+#define CLK_SYS_CTRL_AUXSRC_MSB  (7)
+#define CLK_SYS_CTRL_AUXSRC_LSB  (5)
+#define CLK_REF_CTRL_SRC_BITS    (0x00000003)
+#define CLK_REF_CTRL_SRC_MSB     (1)
+#define CLK_REF_CTRL_SRC_LSB     (0)
+#define CLK_DIV_OFFSET           (0x04)
+#define CLK_SELECTED_OFFSET      (0x08)
+#else
 #define CLK_GPOUT0_CTRL          (CLOCLS_BASE+0x00)
 #define CLK_GPOUT0_DIV           (CLOCLS_BASE+0x04)
 #define CLK_GPOUT0_SELECTED      (CLOCLS_BASE+0x08)
+
 #define CLK_GPOUT1_CTRL          (CLOCLS_BASE+0x0C)
 #define CLK_GPOUT1_DIV           (CLOCLS_BASE+0x10)
 #define CLK_GPOUT1_SELECTED      (CLOCLS_BASE+0x14)
+
 #define CLK_GPOUT2_CTRL          (CLOCLS_BASE+0x18)
 #define CLK_GPOUT2_DIV           (CLOCLS_BASE+0x1C)
 #define CLK_GPOUT2_SELECTED      (CLOCLS_BASE+0x20)
+
 #define CLK_GPOUT3_CTRL          (CLOCLS_BASE+0x24)
 #define CLK_GPOUT3_DIV           (CLOCLS_BASE+0x28)
 #define CLK_GPOUT3_SELECTED      (CLOCLS_BASE+0x2C)
+
 #define CLK_REF_CTRL             (CLOCLS_BASE+0x30)
 #define CLK_REF_DIV              (CLOCLS_BASE+0x34)
 #define CLK_REF_SELECTED         (CLOCLS_BASE+0x38)
+
 #define CLK_SYS_CTRL             (CLOCLS_BASE+0x3C)
 #define CLK_SYS_DIV              (CLOCLS_BASE+0x40)
 #define CLK_SYS_SELECTED         (CLOCLS_BASE+0x44)
+
 #define CLK_PERI_CTRL            (CLOCLS_BASE+0x48)
 #define CLK_PERI_SELECTED        (CLOCLS_BASE+0x50)
+
 #define CLK_USB_CTRL             (CLOCLS_BASE+0x54)
 #define CLK_USB_DIV              (CLOCLS_BASE+0x58)
 #define CLK_USB_SELECTED         (CLOCLS_BASE+0x5C)
+
 #define CLK_ADC_CTRL             (CLOCLS_BASE+0x60)
 #define CLK_ADC_DIV              (CLOCLS_BASE+0x64)
 #define CLK_ADC_SELECTED         (CLOCLS_BASE+0x68)
+
 #define CLK_RTC_CTRL             (CLOCLS_BASE+0x6C)
 #define CLK_RTC_DIV              (CLOCLS_BASE+0x70)
 #define CLK_RTC_SELECTED         (CLOCLS_BASE+0x74)
+#endif
+
 #define CLK_SYS_RESUS_CTRL       (CLOCLS_BASE+0x78)
 #define CLK_SYS_RESUS_STATUS     (CLOCLS_BASE+0x7C)
 #define CLK_FC0_REF_KHZ          (CLOCLS_BASE+0x80)
@@ -136,7 +170,17 @@
 // XOSC Registers
 #define XOSC_BASE                (0x40024000)
 #define XOSC_CTRL                (XOSC_BASE+0x00)
+#define XOSC_CTRL_ENABLE         (0xFAB)
+#define XOSC_CTRL_DISABLE        (0xD1E)
+#define XOSC_CTRL_ENABLE_MSB     (23)
+#define XOSC_CTRL_ENABLE_LSB     (12)
+#define XOSC_CTRL_FREQ_RQNGE_1_15MHZ (0xAA0)
+#define XOSC_CTRL_FREQ_RQNGE_MSB     (11)
+#define XOSC_CTRL_FREQ_RQNGE_LSB     (0)
 #define XOSC_STATUS              (XOSC_BASE+0x04)
+#define XOSC_STATUS_STABLE_BITS  (0x80000000)
+#define XOSC_STATUS_STABLE_MSB   (31)
+#define XOSC_STATUS_STABLE_LSB   (31)
 #define XOSC_DORMANT             (XOSC_BASE+0x08)
 #define XOSC_STARTUP             (XOSC_BASE+0x0C)
 #define XOSC_COUNT               (XOSC_BASE+0x1C)
@@ -232,3 +276,11 @@
 #define MPU_RNR                  (PPB_BASE+0xED98) // MPU Region Number Register
 #define MPU_RBAR                 (PPB_BASE+0xED9C) // MPU Region Base Address Register
 #define MPU_RASR                 (PPB_BASE+0xEDA0) // MPU Region Attribute and Size Register
+
+/***
+ * Unit
+ ***/
+#define KHz (1000)
+#define MHz (1000*KHz)
+
+#define XOSC_HZ (12*MHz)
