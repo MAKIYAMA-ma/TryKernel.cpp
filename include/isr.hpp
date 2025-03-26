@@ -3,10 +3,10 @@
  *      例外ベクターテーブル
 */
 
-#include <typedef.h>
-#include <sysdef.h>
-#include <syslib.h>
-#include <knldef.h>
+#include "typedef.h"
+#include "sysdef.hpp"
+#include "syslib.hpp"
+#include "knldef.h"
 
 /***************************************************
  * 割込みハンドラのクラス定義
@@ -15,7 +15,7 @@ class InterruptHandler
 {
     public:
         virtual void handle() = 0;
-}
+};
 
 class DefaultInterrupt : public InterruptHandler
 {

@@ -1,8 +1,8 @@
-#include <typedef.h>
-#include <sysdef.h>
-#include <syslib.h>
-#include <knldef.h>
-#include <isr.hpp>
+#include "typedef.h"
+#include "sysdef.hpp"
+#include "syslib.hpp"
+#include "knldef.h"
+#include "isr.hpp"
 
 /* メモリセクションのアドレス変数 */
 extern const void *__data_org;
@@ -167,6 +167,7 @@ ResetInterrupt::handle()
     init_clock();
     init_peripherals();
     init_mem();
+    init_systimer();
 
     // TODO
     while(1);

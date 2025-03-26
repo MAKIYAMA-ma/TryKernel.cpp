@@ -130,6 +130,8 @@
 
 #define RESETS_BASE              (0x4000C000)
 #define RESETS_RESET             (RESETS_BASE+0x0)
+#define RESETS_RESET_BIT_PLL_SYS (1<<12)
+#define RESETS_RESET_BIT_PLL_USB (1<<13)
 #define RESETS_WDSEL             (RESETS_BASE+0x4)
 #define RESETS_RESET_DONE        (RESETS_BASE+0x8)
 #define RESETS_BIT_USBCTRL       (1<<24)
