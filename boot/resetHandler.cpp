@@ -21,7 +21,7 @@ extern const void *__bss_end;
  * @param post_div1
  * @param post_div2
  */
-ResetInterrupt::init_pll(PLL pll, UINT refdiv, UINT vco_freq, UINT post_div1, UINT post_div2)
+void ResetInterrupt::init_pll(ResetInterrupt::PLL pll, UINT refdiv, UINT vco_freq, UINT post_div1, UINT post_div2)
 {
     UINT ref_freq = XOSC_HZ / refdiv;
     UINT fbdiv = vco_freq / ref_freq;
@@ -29,25 +29,25 @@ ResetInterrupt::init_pll(PLL pll, UINT refdiv, UINT vco_freq, UINT post_div1, UI
     UINT pdiv = (post_div1 << PLL_PRIM_POSTDIV1_LSB) |
                 (post_div2 << PLL_PRIM_POSTDIV2_LSB);
 
-    UW pll_reset = (pll == PLL_SYS) ? RESETS_RESET_BIT_PLL_SYS : RESETS_RESET_BIT_PLL_USB;
+    UW pll_reset = (pll == PLL::PLL_SYS) ? RESETS_RESET_BIT_PLL_SYS : RESETS_RESET_BIT_PLL_USB;
     set_w(RESETS_RESET, pll_reset);
     clr_w(RESETS_RESET, pll_reset);
-    while (!(in_w(pll+RESETS_RESET_DONE) & pll_reset));
+    while (!(in_w((UW)pll+RESETS_RESET_DONE) & pll_reset));
 
-    out_w(pll+PLL_CS_OFFSET, refdiv);
-    out_w(pll+PLL_FBDIV_INT_OFFSET, fbdiv);
-    clr_w(pll+PLL_PWR_OFFSET, PLL_PWR_BIT_PD | PLL_PWR_BIT_VCOPD);
+    out_w((UW)pll+PLL_CS_OFFSET, refdiv);
+    out_w((UW)pll+PLL_FBDIV_INT_OFFSET, fbdiv);
+    clr_w((UW)pll+PLL_PWR_OFFSET, PLL_PWR_BIT_PD | PLL_PWR_BIT_VCOPD);
 
-    while (!(in_w(pll+PLL_CS_OFFSET) & PLL_CS_BIT_LOCK));
+    while (!(in_w((UW)pll+PLL_CS_OFFSET) & PLL_CS_BIT_LOCK));
 
-    out_w(pll+PLL_PRIM_OFFSET, pdiv);
-    clr_w(pll+PLL_PWR_OFFSET, PLL_PWR_BIT_POSTDIVPD);
+    out_w((UW)pll+PLL_PRIM_OFFSET, pdiv);
+    clr_w((UW)pll+PLL_PWR_OFFSET, PLL_PWR_BIT_POSTDIVPD);
 }
 
 /**
  * @brief クロック設定関数
  */
-ResetInterrupt::clock_config(UINT type, UINT src, UINT auxsrc, UINT src_freq, UINT freq)
+void ResetInterrupt::clock_config(UINT type, UINT src, UINT auxsrc, UINT src_freq, UINT freq)
 {
     if(freq > src_freq) return;
 
@@ -87,13 +87,13 @@ ResetInterrupt::clock_config(UINT type, UINT src, UINT auxsrc, UINT src_freq, UI
     // this code has no effect when selected clock is SYS or REF
     set_w(CLOCKS_BASE+type+CLK_CTRL_OFFSET, CLK_SYS_CTRL_ENABLE_BITS);
 
-    out_w(CLOCKS_BASE+type+CLK_CTRL_DIV, div);
+    out_w(CLOCKS_BASE+type+CLK_DIV_OFFSET, div);
 }
 
 /**
  * @brief クロック初期化
  */
-ResetInterrupt::init_clock()
+void ResetInterrupt::init_clock()
 {
     out_w(CLK_SYS_RESUS_CTRL, 0);
 
@@ -104,8 +104,8 @@ ResetInterrupt::init_clock()
     clr_w(CLOCKS_BASE+CLK_TYPE_REF+CLK_CTRL_OFFSET, CLK_REF_CTRL_SRC_BITS);
     while (!(in_w(CLOCKS_BASE+CLK_TYPE_REF+CLK_SELECTED_OFFSET) & 0x00000001));
 
-    init_pll(PLL_SYS, 1, 1500*MHz, 6, 2);
-    init_pll(PLL_USB, 1, 1200*MHz, 5, 5);
+    init_pll(PLL::PLL_SYS, 1, 1500*MHz, 6, 2);
+    init_pll(PLL::PLL_USB, 1, 1200*MHz, 5, 5);
 
     clock_config(CLK_TYPE_REF, 0x02, 0, 12*MHz, 12*MHz);
     clock_config(CLK_TYPE_SYS, 0x01, 0, 125*MHz, 125*MHz);
@@ -118,14 +118,14 @@ ResetInterrupt::init_clock()
 /**
  * @brief ペリフェラル初期化
  */
-ResetInterrupt::init_peripherals()
+void ResetInterrupt::init_peripherals()
 {
 }
 
 /**
  * @brief メモリ初期化
  */
-ResetInterrupt::init_mem()
+void ResetInterrupt::init_mem()
 {
     // 初期値のあるグローバル変数の初期化
     _UW *src = (_UW*)&__data_org;
@@ -146,10 +146,10 @@ ResetInterrupt::init_mem()
 /**
  * @brief XOSC初期化
  */
-ResetInterrupt::init_xosc()
+void ResetInterrupt::init_xosc()
 {
     out_w(XOSC_CTRL, XOSC_CTRL_FREQ_RQNGE_1_15MHZ);
-    out_w(XOSC_STARTUP, ((((XOSC_HZ / KHZ) + 128) / 256) * 64));
+    out_w(XOSC_STARTUP, ((((XOSC_HZ / KHz) + 128) / 256) * 64));
     set_w(XOSC_CTRL, (XOSC_CTRL_ENABLE << XOSC_CTRL_ENABLE_LSB));
     while (!(in_w(XOSC_STATUS) & XOSC_STATUS_STABLE_BITS));
 }
@@ -157,11 +157,11 @@ ResetInterrupt::init_xosc()
 /**
  * @brief タイマの初期化
  */
-ResetInterrupt::init_systimer()
+void ResetInterrupt::init_systimer()
 {
 }
 
-ResetInterrupt::handle()
+void ResetInterrupt::handle()
 {
     init_xosc();
     init_clock();
