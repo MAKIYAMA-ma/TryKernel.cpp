@@ -4,6 +4,13 @@
 #include <knldef.h>
 #include <isr.hpp>
 
+/* メモリセクションのアドレス変数 */
+extern const void *__data_org;
+extern const void *__data_start;
+extern const void *__data_end;
+extern const void *__bss_start;
+extern const void *__bss_end;
+
 /**
  * @brief PLLの初期化
  * とりあえず、公式SDKと同じ設定を試みる
@@ -120,6 +127,20 @@ ResetInterrupt::init_peripherals()
  */
 ResetInterrupt::init_mem()
 {
+    // 初期値のあるグローバル変数の初期化
+    _UW *src = (_UW*)&__data_org;
+    _UW *dst = (_UW*)&__data_start;
+    _UW *end = (_UW*)&__data_end;
+    while(dst != end) {
+        *dst++ = *src++;
+    }
+
+    // 初期値がないグローバル変数の初期化
+    dst = (_UW*)&__bss_start;
+    end = (_UW*)&__bss_end;
+    while(dst != end) {
+        *dst++ = 0;
+    }
 }
 
 /**
@@ -142,6 +163,11 @@ ResetInterrupt::init_systimer()
 
 ResetInterrupt::handle()
 {
+    init_xosc();
+    init_clock();
+    init_peripherals();
+    init_mem();
+
     // TODO
     while(1);
 }
