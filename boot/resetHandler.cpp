@@ -120,6 +120,12 @@ void ResetInterrupt::init_clock()
  */
 void ResetInterrupt::init_peripherals()
 {
+    // GPIO
+    // UART0
+    // のリセットを解除
+    UW tgt = RESETS_BIT_IO_BANK0 | RESETS_BIT_PADS_BANK0 | RESETS_BIT_UART0;
+    clr_w(RESETS_RESET, tgt);
+    while((!(in_w(RESETS_RESET_DONE) & tgt)) == tgt);
 }
 
 /**
