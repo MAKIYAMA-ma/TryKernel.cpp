@@ -1,3 +1,5 @@
+#ifndef ISR_HPP
+#define ISR_HPP
 /* 
  *** Try Kernel
  *      例外ベクターテーブル
@@ -69,3 +71,5 @@ class ResetInterrupt : public InterruptHandler
  ***************************************************/
 extern "C" void Default_Handler();
 extern "C" void Reset_Handler();
+
+#endif

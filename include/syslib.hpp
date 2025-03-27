@@ -1,5 +1,5 @@
+#ifndef SYSLIB_HPP
 #define SYSLIB_HPP
-#ifdef SYSLIB_HPP
 
 #include "typedef.h"
 
