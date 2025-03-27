@@ -4,7 +4,7 @@
 #include "knldef.h"
 #include "isr.hpp"
 
-DefaultInterrupt::handle()
+void DefaultInterrupt::handle()
 {
     while(1);
 }
