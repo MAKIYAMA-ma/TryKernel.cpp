@@ -19,28 +19,11 @@
 #define XIP_SSI_BASE                 (0x18000000)
 
 /***
- * SRAM. SRAM0-3 striped:
+ * SRAM:
  ***/
 #define SRAM_BASE                    (0x20000000)
-#define SRAM_STRIPED_BASE            (0x20000000)
-#define SRAM_STRIPED_END             (0x20040000)
-#define SRAM_STRIPED_SIZE            (256*1024)
-#define INITIAL_SP                   (SRAM_BASE+SRAM_STRIPED_SIZE)
-
-/***
- * SRAM 4-5 are always non-striped:
- ***/
-#define SRAM4_BASE                   (0x20040000)
-#define SRAM5_BASE                   (0x20041000)
-#define SRAM_END                     (0x20042000)
-
-/***
- * Non-striped aliases of SRAM0-3:
- ***/
-#define SRAM0_BASE                   (0x21000000)
-#define SRAM1_BASE                   (0x21010000)
-#define SRAM2_BASE                   (0x21020000)
-#define SRAM3_BASE                   (0x21030000)
+#define SRAM_SIZE                    (256*1024)             // PicoのSRAMは256K
+#define INITIAL_SP                   (SRAM_BASE+SRAM_SIZE)  // 初期スタックポインタは最後尾領域を使う
 
 /***
  * APB Peripherals:
