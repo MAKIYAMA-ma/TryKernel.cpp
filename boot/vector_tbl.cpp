@@ -4,7 +4,7 @@
 */
 
 #include "sysdef.hpp"
-#include "knldef.h"
+#include "knldef.hpp"
 #include "isr.hpp"
 
 

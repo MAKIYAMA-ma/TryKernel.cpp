@@ -1,7 +1,7 @@
-#include "typedef.h"
-#include "sysdef.hpp"
-#include "syslib.hpp"
-#include "knldef.h"
+/* #include "typedef.h" */
+/* #include "sysdef.hpp" */
+/* #include "syslib.hpp" */
+/* #include "knldef.hpp" */
 #include "isr.hpp"
 
 void DefaultInterrupt::handle()

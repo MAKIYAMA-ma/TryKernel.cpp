@@ -8,7 +8,7 @@
 #include "typedef.h"
 #include "sysdef.hpp"
 #include "syslib.hpp"
-#include "knldef.h"
+#include "knldef.hpp"
 
 /***************************************************
  * 割込みハンドラのクラス定義

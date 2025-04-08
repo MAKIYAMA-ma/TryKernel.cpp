@@ -1,7 +1,6 @@
 #include "typedef.h"
 #include "sysdef.hpp"
 #include "syslib.hpp"
-#include "knldef.h"
 #include "isr.hpp"
 
 /* メモリセクションのアドレス変数 */
@@ -108,7 +107,7 @@ void ResetInterrupt::init_clock()
     init_pll(PLL::PLL_USB, 1, 1200*MHz, 5, 5);
 
     clock_config(CLK_TYPE_REF, 0x02, 0, 12*MHz, 12*MHz);
-    clock_config(CLK_TYPE_SYS, 0x01, 0, 125*MHz, 125*MHz);
+    clock_config(CLK_TYPE_SYS, 0x01, 0, SYS_HZ, SYS_HZ);
     clock_config(CLK_TYPE_USB, 0, 0, 48*MHz, 48*MHz);
     clock_config(CLK_TYPE_ADC, 0, 0, 48*MHz, 48*MHz);
     clock_config(CLK_TYPE_RTC, 0, 0, 48*MHz, 46875);
@@ -162,9 +161,15 @@ void ResetInterrupt::init_xosc()
 
 /**
  * @brief タイマの初期化
+ * CPU Clock(125MHz)を入力として使用
+ * 10msecカウンタとする
  */
 void ResetInterrupt::init_systimer()
 {
+    out_w(SYST_CSR, SYST_CSR_CLKSOURCE);    // SysTick停止
+    out_w(SYST_RVR, (TIMER_PERIOD_MS*SYS_HZ/1000)-1);
+    out_w(SYST_CVR, (TIMER_PERIOD_MS*SYS_HZ/1000)-1);
+    out_w(SYST_CSR, SYST_CSR_CLKSOURCE | SYST_CSR_ENABLE);  // SysTick動作開始
 }
 
 void ResetInterrupt::handle()
@@ -176,6 +181,7 @@ void ResetInterrupt::handle()
     init_systimer();
 
     // TODO
+    main();
     while(1);
 }
 extern "C" void Reset_Handler()
