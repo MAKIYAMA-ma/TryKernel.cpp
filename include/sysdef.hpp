@@ -229,12 +229,37 @@
  * IOPORT Peripherals:
  ***/
 #define SIO_BASE                     (0xD0000000)
+#define SIO_CPUID                    (SIO_BASE+0x000) //Processor core identifier
+#define GPIO_IN                      (SIO_BASE+0x004) //Input value for GPIO pins
+#define GPIO_HI_IN                   (SIO_BASE+0x008) //Input value for QSPI pins
+#define GPIO_OUT                     (SIO_BASE+0x010) //GPIO output value
+#define GPIO_OUT_SET                 (SIO_BASE+0x014) //GPIO output value set
+#define GPIO_OUT_CLR                 (SIO_BASE+0x018) //GPIO output value clear
+#define GPIO_OUT_XOR                 (SIO_BASE+0x01c) //GPIO output value XOR
+#define GPIO_OE                      (SIO_BASE+0x020) //GPIO output enable
+#define GPIO_OE_SET                  (SIO_BASE+0x024) //GPIO output enable set
+#define GPIO_OE_CLR                  (SIO_BASE+0x028) //GPIO output enable clear
+#define GPIO_OE_XOR                  (SIO_BASE+0x02c) //GPIO output enable XOR
+#define GPIO_HI_OUT                  (SIO_BASE+0x030) //QSPI output value
+#define GPIO_HI_OUT_SET              (SIO_BASE+0x034) //QSPI output value set
+#define GPIO_HI_OUT_CLR              (SIO_BASE+0x038) //QSPI output value clear
+#define GPIO_HI_OUT_XOR              (SIO_BASE+0x03c) //QSPI output value XOR
+#define GPIO_HI_OE                   (SIO_BASE+0x040) //QSPI output enable
+#define GPIO_HI_OE_SET               (SIO_BASE+0x044) //QSPI output enable set
+#define GPIO_HI_OE_CLR               (SIO_BASE+0x048) //QSPI output enable clear
+#define GPIO_HI_OE_XOR               (SIO_BASE+0x04c) //QSPI output enable XOR
+
+#define GPIO_PORT_LED                (1<<25)          // RasberyPi pico on board LED port
 
 /***
  * Cortex-M0+ Internal Peripherals:
  ***/
 #define PPB_BASE                     (0xE0000000)
 #define SYST_CSR                     (PPB_BASE+0xE010) // SysTick Control and Status Register
+#define SYST_CSR_COUTFLAG            (1<<16)
+#define SYST_CSR_CLKSOURCE           (1<<2)
+#define SYST_CSR_TICKINT             (1<<1)
+#define SYST_CSR_ENABLE              (1<<0)
 #define SYST_RVR                     (PPB_BASE+0xE014) // SysTick Reload Value Register
 #define SYST_CVR                     (PPB_BASE+0xE018) // SysTick Current Value Register
 #define SYST_CALIB                   (PPB_BASE+0xE01C) // SysTick Calibration Value Register
@@ -272,4 +297,7 @@
 #define MHz                          (1000*KHz)
 
 #define XOSC_HZ                      (12000000u)
+
+#define SYS_HZ                       (125*MHz)
+#define TIMER_PERIOD_MS              (1)
 #endif
