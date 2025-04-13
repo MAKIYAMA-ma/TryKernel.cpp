@@ -64,7 +64,7 @@ static inline void __set_PRIMASK(UW value)
 static inline UW __get_PRIMASK(void)
 {
     UW value;
-    __asm__ volatile("MRS PRIMASK, %0" : "=r"(value));
+    __asm__ volatile("MRS %0, PRIMASK" : "=r"(value));
     return value;
 }
 
