@@ -125,6 +125,11 @@ void ResetInterrupt::init_peripherals()
     UW tgt = RESETS_BIT_IO_BANK0 | RESETS_BIT_PADS_BANK0 | RESETS_BIT_UART0;
     clr_w(RESETS_RESET, tgt);
     while((!(in_w(RESETS_RESET_DONE) & tgt)) == tgt);
+
+    out_w(GPIO_OE_CLR, GPIO_PORT_LED);
+    out_w(GPIO_OUT_CLR, GPIO_PORT_LED);
+    out_w(GPIO_CTRL(GPIO_LED_NUM), 5);  // LEDのポートをIOに設定
+    out_w(GPIO_OE_SET, GPIO_PORT_LED);
 }
 
 /**
