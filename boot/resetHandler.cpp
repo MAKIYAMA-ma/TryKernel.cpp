@@ -174,11 +174,18 @@ void ResetInterrupt::init_systimer()
 
 void ResetInterrupt::handle()
 {
-    init_xosc();
+    UINT    intsts;
+
+    DI(intsts);     /* 割込みを無効化 */
+
+    // TODO 例外の優先度設定
+
     init_clock();
     init_peripherals();
     init_mem();
     init_systimer();
+
+    EI(intsts);     /* 割込みを有効化 */
 
     // TODO
     main();
