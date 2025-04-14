@@ -31,7 +31,7 @@ void ResetInterrupt::init_pll(ResetInterrupt::PLL pll, UINT refdiv, UINT vco_fre
     UW pll_reset = (pll == PLL::PLL_SYS) ? RESETS_RESET_BIT_PLL_SYS : RESETS_RESET_BIT_PLL_USB;
     set_w(RESETS_RESET, pll_reset);
     clr_w(RESETS_RESET, pll_reset);
-    while (!(in_w((UW)pll+RESETS_RESET_DONE) & pll_reset));
+    while (!(in_w((UW)RESETS_RESET_DONE) & pll_reset));
 
     out_w((UW)pll+PLL_CS_OFFSET, refdiv);
     out_w((UW)pll+PLL_FBDIV_INT_OFFSET, fbdiv);
