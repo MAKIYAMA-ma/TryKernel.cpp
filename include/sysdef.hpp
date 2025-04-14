@@ -149,7 +149,11 @@
 #define RESETS_BIT_ADC               (1<<0)
 
 #define PSM_BASE                     (0x40010000)
+
 #define IO_BANK0_BASE                (0x40014000)
+#define GPIO_STATUS(n)               (IO_BANK0_BASE+0x008*n)
+#define GPIO_CTRL(n)                 (IO_BANK0_BASE+0x004+0x008*n)
+
 #define IO_QSPI_BASE                 (0x40018000)
 #define PADS_BANK0_BASE              (0x4001C000)
 #define PADS_QSPI_BASE               (0x40020000)
@@ -249,7 +253,9 @@
 #define GPIO_HI_OE_CLR               (SIO_BASE+0x048) //QSPI output enable clear
 #define GPIO_HI_OE_XOR               (SIO_BASE+0x04c) //QSPI output enable XOR
 
-#define GPIO_PORT_LED                (1<<25)          // RasberyPi pico on board LED port
+// RasberyPi pico on board LED port
+#define GPIO_LED_NUM                 (25)
+#define GPIO_PORT_LED                (1<<GPIO_LED_NUM)
 
 /***
  * Cortex-M0+ Internal Peripherals:
